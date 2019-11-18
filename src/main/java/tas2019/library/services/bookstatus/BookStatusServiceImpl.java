@@ -31,4 +31,9 @@ public class BookStatusServiceImpl implements BookStatusService {
     public void delete(int id) {
         repository.deleteById(id);
     }
+
+    @Override
+    public int countByReaderId(int id) {
+        return repository.countByReaderId(id);
+    }
 }
