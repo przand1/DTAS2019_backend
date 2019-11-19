@@ -41,7 +41,12 @@ public class BookStatusController {
 
     @PostMapping("/bookstatus")
     public ResponseEntity<BookStatus> create(@RequestBody @Valid @NotNull BookStatus status) {
-        service.save(status);
+        try {
+            service.save(status);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
         /*
             Uwaga! Nie pomylić obiektu status z metodą status() z klasy ResponseEntity
          */
@@ -49,10 +54,16 @@ public class BookStatusController {
     }
 
     @PutMapping("/bookstatus")
-    public ResponseEntity<Void> edit(@RequestBody @Valid @NotNull BookStatus status) {
+    public ResponseEntity<String> edit(@RequestBody @Valid @NotNull BookStatus status) {
         Optional<BookStatus> status1 = service.getById(status.getId());
         if (status1.isPresent()) {
-            service.save(status);
+            try {
+                service.save(status);
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body("Nieprawidłowe ID książki lub czytelnika");
+            }
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();

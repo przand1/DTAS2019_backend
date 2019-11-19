@@ -54,7 +54,7 @@ public class BookStatusRepositoryTest {
     }
 
     @Test
-    public void countByReaderShouldReturn0() {
+    public void countByReaderIdShouldReturn0() {
         Reader reader = new Reader();
         entityManager.persist(reader);
         entityManager.flush();
