@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tas2019.library.dtos.ReaderDTO;
 import tas2019.library.entities.Reader;
 import tas2019.library.services.reader.ReaderService;
 
@@ -24,10 +25,10 @@ public class ReaderController {
             path = "/reader/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<Reader> getById(@PathVariable("id") int id) {
+    public ResponseEntity<ReaderDTO> getById(@PathVariable("id") int id) {
         Optional<Reader> reader= service.getById(id);
         return reader.isPresent() ?
-                ResponseEntity.ok(reader.get()) :
+                ResponseEntity.ok(service.getDTO(reader.get())) :
                 ResponseEntity.notFound().build();
     }
 
@@ -35,7 +36,7 @@ public class ReaderController {
             path = "/reader",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public Iterable<Reader> getAll() {
+    public Iterable<ReaderDTO> getAll() {
         return service.getAll();
     }
 
