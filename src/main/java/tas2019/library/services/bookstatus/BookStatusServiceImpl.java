@@ -49,6 +49,16 @@ public class BookStatusServiceImpl implements BookStatusService {
             logger.error("Reader with ID " + status.getReader().getId() + " not found.");
             throw new IllegalArgumentException();
         }
+        if (status.isRented()) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date());
+            status.setRentedOn(calendar.getTime());
+            calendar.add(Calendar.DATE,  14);
+            status.setRentedUntil(calendar.getTime());
+        } else {
+            status.setRentedUntil(null);
+            status.setRentedOn(null);
+        }
         return repository.save(status);
     }
 
