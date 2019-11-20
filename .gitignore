@@ -119,3 +119,6 @@ hs_err_pid*
 
 #SonarLint
 .idea/sonarlint
+
+#log4j logs
+*.log

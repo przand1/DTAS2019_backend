@@ -1,5 +1,6 @@
 package tas2019.library.services.bookstatus;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tas2019.library.entities.BookStatus;
@@ -19,6 +20,8 @@ public class BookStatusServiceImpl implements BookStatusService {
     @Autowired
     private ReaderRepository readerRepository;
 
+    private Logger logger = Logger.getLogger(BookStatusService.class);
+
     @Override
     public Optional<BookStatus> getById(int id) {
         return repository.findById(id);
@@ -34,10 +37,15 @@ public class BookStatusServiceImpl implements BookStatusService {
         /*
             Jeśli zawiera książkę lub czytelnika o złym id, nie zapisze i rzuci wyjątek.
          */
+        if (! bookRepository.existsById(status.getBook().getId())) {
+            logger.error("Book with ID " + status.getBook().getId() + " not found.");
+            throw new IllegalArgumentException();
+        }
         if (
-                ! bookRepository.existsById(status.getBook().getId()) ||
-                ( Objects.nonNull(status.getReader()) && ! readerRepository.existsById(status.getReader().getId()) )
+                Objects.nonNull(status.getReader()) &&
+                ! readerRepository.existsById(status.getReader().getId())
         ) {
+            logger.error("Reader with ID " + status.getReader().getId() + " not found.");
             throw new IllegalArgumentException();
         }
         return repository.save(status);
