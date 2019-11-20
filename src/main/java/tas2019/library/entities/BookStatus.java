@@ -7,7 +7,7 @@ import java.util.Date;
 
 @Entity
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class BookStatus {
+public class BookStatus implements Comparable<BookStatus> {
 
     @Id
     @GeneratedValue
@@ -73,5 +73,10 @@ public class BookStatus {
 
     public void setReader(Reader reader) {
         this.reader = reader;
+    }
+
+    @Override
+    public int compareTo(BookStatus status) {
+        return this.getBook().getId() - status.getBook().getId();
     }
 }

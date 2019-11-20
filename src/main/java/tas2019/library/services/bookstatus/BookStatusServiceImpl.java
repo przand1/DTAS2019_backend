@@ -8,8 +8,7 @@ import tas2019.library.repositories.BookRepository;
 import tas2019.library.repositories.BookStatusRepository;
 import tas2019.library.repositories.ReaderRepository;
 
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class BookStatusServiceImpl implements BookStatusService {
@@ -29,7 +28,9 @@ public class BookStatusServiceImpl implements BookStatusService {
 
     @Override
     public Iterable<BookStatus> getAll() {
-        return repository.findAll();
+        List list = (List) repository.findAll();
+        Collections.sort(list);
+        return list;
     }
 
     @Override
