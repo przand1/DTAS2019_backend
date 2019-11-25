@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import tas2019.library.entities.Book;
+import tas2019.library.entities.BookStatus;
 import tas2019.library.repositories.BookRepository;
+import tas2019.library.repositories.BookStatusRepository;
 
 import java.util.Optional;
 
@@ -12,6 +14,8 @@ import java.util.Optional;
 public class BookServiceImpl implements BookService{
     @Autowired
     private BookRepository repository;
+    @Autowired
+    public BookStatusRepository bookStatusRepo;
 
     @Override
     public Optional<Book> getById(int id) {
@@ -35,6 +39,8 @@ public class BookServiceImpl implements BookService{
 
     @Override
     public void delete(int id) {
+        int statusId = bookStatusRepo.findByBookId(id).getId();
+        bookStatusRepo.deleteById(statusId);
         repository.deleteById(id);
     }
 }
