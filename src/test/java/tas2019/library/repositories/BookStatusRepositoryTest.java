@@ -1,7 +1,6 @@
 package tas2019.library.repositories;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -11,9 +10,12 @@ import tas2019.library.entities.Book;
 import tas2019.library.entities.BookStatus;
 import tas2019.library.entities.Reader;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class BookStatusRepositoryTest {
+class BookStatusRepositoryTest {
     @Autowired
     private TestEntityManager entityManager;
     @Autowired
@@ -24,7 +26,7 @@ public class BookStatusRepositoryTest {
     private BookStatusRepository bookStatusRepository;
 
     @Test
-    public void countByReaderIdShouldReturn3() {
+    void countByReaderIdShouldReturn3() {
         Reader reader = new Reader();
 
         Book book1 = new Book();
@@ -49,16 +51,16 @@ public class BookStatusRepositoryTest {
         entityManager.persist(bookStatus3);
         entityManager.flush();
 
-        Assert.assertEquals(3, bookStatusRepository.countByReaderId(reader.getId()));
+        assertEquals(3, bookStatusRepository.countByReaderId(reader.getId()));
 
     }
 
     @Test
-    public void countByReaderIdShouldReturn0() {
+    void countByReaderIdShouldReturn0() {
         Reader reader = new Reader();
         entityManager.persist(reader);
         entityManager.flush();
 
-        Assert.assertEquals(0, bookStatusRepository.countByReaderId(reader.getId()));
+        assertEquals(0, bookStatusRepository.countByReaderId(reader.getId()));
     }
 }

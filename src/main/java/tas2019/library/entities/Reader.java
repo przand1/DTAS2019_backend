@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.util.Date;
 
 @Entity
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -30,6 +31,12 @@ public class Reader {
 
     @Column
     private String email;
+
+    @Column
+    private Date cardExpiryDate;
+
+    @Column
+    private int fine = 0;
 
     public Reader() {}
 
@@ -75,5 +82,21 @@ public class Reader {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Date getCardExpiryDate() {
+        return cardExpiryDate;
+    }
+
+    public void setCardExpiryDate(Date cardExpiryDate) {
+        this.cardExpiryDate = cardExpiryDate;
+    }
+
+    public int getFine() {
+        return fine;
+    }
+
+    public void setFine(int fine) {
+        this.fine = fine;
     }
 }
