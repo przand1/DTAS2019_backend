@@ -7,11 +7,15 @@ import tas2019.library.entities.Book;
 import tas2019.library.entities.BookStatus;
 import tas2019.library.entities.Reader;
 import tas2019.library.exceptions.BookLimitExceededException;
+import tas2019.library.exceptions.CardExpiredException;
+import tas2019.library.exceptions.ReaderHasFineException;
 import tas2019.library.services.book.BookService;
 import tas2019.library.services.bookstatus.BookStatusService;
 import tas2019.library.services.reader.ReaderService;
 
 import javax.annotation.PostConstruct;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -28,7 +32,7 @@ public class ModelGen {
     private Logger logger = Logger.getLogger(ModelGen.class);
 
     @PostConstruct
-    void generateMockData() {
+    void generateMockData() throws ParseException {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
         calendar.add(Calendar.YEAR, 1);
@@ -65,6 +69,12 @@ public class ModelGen {
         og.setYear(1979);
         og.setCategory("Powieść historyczna");
 
+        Book potop = new Book();
+        potop.setTitle("Potop");
+        potop.setAuthor("Sienkiewicz Henryk");
+        potop.setYear(1979);
+        potop.setCategory("Powieść historyczna");
+
         Reader nowak = new Reader();
         nowak.setLastName("Nowak");
         nowak.setFirstName("Jan");
@@ -89,6 +99,13 @@ public class ModelGen {
         ania.setEmail("nowakowska@abc.de");
         ania.setCardExpiryDate(date);
 
+        Reader late = new Reader();
+        late.setLastName("Spóźniony");
+        late.setFirstName("Jan");
+        late.setAddress("Polna 43, 60-331 Poznań");
+        late.setEmail("late@abc.se");
+        late.setCardExpiryDate(calendar.getTime());
+
         calendar.add(Calendar.YEAR, -2);
 
         Reader expired = new Reader();
@@ -102,12 +119,14 @@ public class ModelGen {
         readerService.save(gosia);
         readerService.save(nowak);
         readerService.save(expired);
+        readerService.save(late);
 
         bookService.save(tok);
         bookService.save(lotr);
         bookService.save(lotr2);
         bookService.save(king);
         bookService.save(og);
+        bookService.save(potop);
 
         BookStatus tokSt = new BookStatus();
         tokSt.setBook(tok);
@@ -119,6 +138,17 @@ public class ModelGen {
         kingSt.setBook(king);
         BookStatus ogSt = new BookStatus();
         ogSt.setBook(og);
+        BookStatus potopSt = new BookStatus();
+        potopSt.setBook(potop);
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Date date1 = format.parse("2018-12-31");
+        Date date2 = format.parse("2019-01-13");
+
+        potopSt.setRented(true);
+        potopSt.setReader(late);
+        potopSt.setRentedOn(date1);
+        potopSt.setRentedUntil(date2);
 
         try {
             bookStatusService.save(tokSt);
@@ -126,8 +156,9 @@ public class ModelGen {
             bookStatusService.save(lotr2St);
             bookStatusService.save(kingSt);
             bookStatusService.save(ogSt);
-        } catch (Exception e) {
-            logger.error(e);
+            bookStatusService.uncheckedSave(potopSt);
+        } catch (BookLimitExceededException | CardExpiredException | ReaderHasFineException e) {
+            logger.error(e.toString());
         }
 
     }

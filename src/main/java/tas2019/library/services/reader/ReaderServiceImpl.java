@@ -9,6 +9,7 @@ import tas2019.library.repositories.ReaderRepository;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -49,8 +50,27 @@ public class ReaderServiceImpl implements ReaderService {
 
     @Override
     public boolean readerCardIsValid(int readerId) {
+        int i = 0;
         Reader reader = repository.findById(readerId).get();
-        int i = reader.getCardExpiryDate().compareTo(new Date());
+        if (Objects.nonNull(reader.getCardExpiryDate()))
+            i = reader.getCardExpiryDate().compareTo(new Date());
         return i > 0;
+    }
+
+    @Override
+    public void applyFine(int diff, int readerId) {
+        Optional<Reader> reader = repository.findById(readerId);
+        if (reader.isPresent()) {
+            reader.get().setFine(reader.get().getFine() + diff);
+        }
+    }
+
+    @Override
+    public boolean readerHasFine(int id) {
+        Optional<Reader> readerOptional = repository.findById(id);
+        if (readerOptional.isPresent()) {
+            return readerOptional.get().getFine() > 0;
+        }
+        return false;
     }
 }

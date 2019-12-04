@@ -15,4 +15,8 @@ public interface ReaderService {
     ReaderDTO getDTO(Reader reader);
 
     boolean readerCardIsValid(int readerId);
+
+    void applyFine(int diff, int readerId);
+
+    boolean readerHasFine(int id);
 }

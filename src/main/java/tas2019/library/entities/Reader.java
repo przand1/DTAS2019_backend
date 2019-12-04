@@ -35,6 +35,9 @@ public class Reader {
     @Column
     private Date cardExpiryDate;
 
+    @Column
+    private int fine = 0;
+
     public Reader() {}
 
     public int getId() {
@@ -87,5 +90,13 @@ public class Reader {
 
     public void setCardExpiryDate(Date cardExpiryDate) {
         this.cardExpiryDate = cardExpiryDate;
+    }
+
+    public int getFine() {
+        return fine;
+    }
+
+    public void setFine(int fine) {
+        this.fine = fine;
     }
 }

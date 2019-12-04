@@ -3,15 +3,18 @@ package tas2019.library.services.bookstatus;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tas2019.library.entities.Book;
 import tas2019.library.entities.BookStatus;
 import tas2019.library.exceptions.BookLimitExceededException;
 import tas2019.library.exceptions.CardExpiredException;
+import tas2019.library.exceptions.ReaderHasFineException;
 import tas2019.library.repositories.BookRepository;
 import tas2019.library.repositories.BookStatusRepository;
 import tas2019.library.repositories.ReaderRepository;
 import tas2019.library.services.reader.ReaderService;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class BookStatusServiceImpl implements BookStatusService {
@@ -39,7 +42,7 @@ public class BookStatusServiceImpl implements BookStatusService {
     }
 
     @Override
-    public BookStatus save(BookStatus status) throws BookLimitExceededException, CardExpiredException {
+    public BookStatus save(BookStatus status) throws BookLimitExceededException, CardExpiredException, ReaderHasFineException {
         /*
             Jeśli zawiera książkę lub czytelnika o złym id, nie zapisze i rzuci wyjątek.
          */
@@ -47,7 +50,6 @@ public class BookStatusServiceImpl implements BookStatusService {
             logger.error("Book with ID " + status.getBook().getId() + " not found.");
             throw new IllegalArgumentException();
         }
-
         if (
                 Objects.nonNull(status.getReader()) &&
                 ! readerRepository.existsById(status.getReader().getId())
@@ -63,6 +65,9 @@ public class BookStatusServiceImpl implements BookStatusService {
             if (!readerService.readerCardIsValid(status.getReader().getId())) {
                 throw new CardExpiredException("Card expired");
             }
+            if (readerService.readerHasFine(status.getReader().getId())) {
+                throw new ReaderHasFineException("Fined!");
+            }
 
 
             Calendar calendar = Calendar.getInstance();
@@ -71,9 +76,23 @@ public class BookStatusServiceImpl implements BookStatusService {
             calendar.add(Calendar.DATE,  14);
             status.setRentedUntil(calendar.getTime());
         } else {
+            Date now = new Date();
+            Optional<BookStatus> optionalBookStatus = repository.findById(status.getId());
+            if (
+                    optionalBookStatus.isPresent() &&
+                    optionalBookStatus.get().getRentedUntil().compareTo(now) < 0
+            ) {
+                long diffInMillies = Math.abs(optionalBookStatus.get().getRentedUntil().getTime() - now.getTime());
+                int diff = (int) TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+                readerService.applyFine(diff, optionalBookStatus.get().getReader().getId());
+            }
             status.setRentedUntil(null);
             status.setRentedOn(null);
         }
+        return repository.save(status);
+    }
+    @Override
+    public BookStatus uncheckedSave(BookStatus status) {
         return repository.save(status);
     }
 

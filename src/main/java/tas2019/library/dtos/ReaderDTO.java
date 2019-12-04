@@ -17,6 +17,7 @@ public class ReaderDTO {
     private String email;
     private int rentedBooksCount;
     private Date cardExpiryDate;
+    private int fine;
 
     public ReaderDTO(Reader reader, int bookCount) {
         id = reader.getId();
@@ -26,7 +27,8 @@ public class ReaderDTO {
         phone = reader.getPhone();
         email = reader.getEmail();
         rentedBooksCount = bookCount;
-        this.cardExpiryDate = reader.getCardExpiryDate();
+        cardExpiryDate = reader.getCardExpiryDate();
+        fine = reader.getFine();
     }
 
     public int getId() {
@@ -59,5 +61,9 @@ public class ReaderDTO {
 
     public Date getCardExpiryDate() {
         return cardExpiryDate;
+    }
+
+    public int getFine() {
+        return fine;
     }
 }
