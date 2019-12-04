@@ -3,6 +3,8 @@ package tas2019.library.dtos;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import tas2019.library.entities.Reader;
 
+import java.util.Date;
+
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ReaderDTO {
@@ -14,6 +16,7 @@ public class ReaderDTO {
     private String phone;
     private String email;
     private int rentedBooksCount;
+    private Date cardExpiryDate;
 
     public ReaderDTO(Reader reader, int bookCount) {
         id = reader.getId();
@@ -23,6 +26,7 @@ public class ReaderDTO {
         phone = reader.getPhone();
         email = reader.getEmail();
         rentedBooksCount = bookCount;
+        this.cardExpiryDate = reader.getCardExpiryDate();
     }
 
     public int getId() {
@@ -51,5 +55,9 @@ public class ReaderDTO {
 
     public int getRentedBooksCount() {
         return rentedBooksCount;
+    }
+
+    public Date getCardExpiryDate() {
+        return cardExpiryDate;
     }
 }
