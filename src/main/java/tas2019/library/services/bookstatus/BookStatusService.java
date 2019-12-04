@@ -9,7 +9,6 @@ public interface BookStatusService {
     Iterable<BookStatus> getAll();
 
     BookStatus save(BookStatus status);
-    void delete(int id);
 
     int countByReaderId(int id);
 }

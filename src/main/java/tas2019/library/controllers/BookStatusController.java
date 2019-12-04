@@ -69,15 +69,4 @@ public class BookStatusController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
-
-    @DeleteMapping("/bookstatus/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") int id) {
-        Optional<BookStatus> status = service.getById(id);
-        if (status.isPresent()) {
-            service.delete(id);
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-    }
 }
