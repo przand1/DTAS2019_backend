@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tas2019.library.entities.BookStatus;
+import tas2019.library.exceptions.BookLimitExceededException;
 import tas2019.library.services.bookstatus.BookStatusService;
 
 import javax.validation.Valid;
@@ -43,7 +44,7 @@ public class BookStatusController {
     public ResponseEntity<BookStatus> create(@RequestBody @Valid @NotNull BookStatus status) {
         try {
             service.save(status);
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
@@ -53,6 +54,9 @@ public class BookStatusController {
         return ResponseEntity.status(HttpStatus.CREATED).body(status);
     }
 
+    /*
+        Wypożyczanie książki
+     */
     @PutMapping("/bookstatus")
     public ResponseEntity<String> edit(@RequestBody @Valid @NotNull BookStatus status) {
         Optional<BookStatus> status1 = service.getById(status.getId());
@@ -63,6 +67,10 @@ public class BookStatusController {
                 return ResponseEntity
                         .status(HttpStatus.BAD_REQUEST)
                         .body("Nieprawidłowe ID książki lub czytelnika");
+            } catch (BookLimitExceededException b) {
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body("Przekroczono limit 4 książek");
             }
             return ResponseEntity.ok().build();
         } else {

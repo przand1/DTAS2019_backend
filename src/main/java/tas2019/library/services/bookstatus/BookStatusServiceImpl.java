@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tas2019.library.entities.BookStatus;
+import tas2019.library.exceptions.BookLimitExceededException;
 import tas2019.library.repositories.BookRepository;
 import tas2019.library.repositories.BookStatusRepository;
 import tas2019.library.repositories.ReaderRepository;
@@ -34,7 +35,7 @@ public class BookStatusServiceImpl implements BookStatusService {
     }
 
     @Override
-    public BookStatus save(BookStatus status) {
+    public BookStatus save(BookStatus status) throws BookLimitExceededException {
         /*
             Jeśli zawiera książkę lub czytelnika o złym id, nie zapisze i rzuci wyjątek.
          */
@@ -42,6 +43,7 @@ public class BookStatusServiceImpl implements BookStatusService {
             logger.error("Book with ID " + status.getBook().getId() + " not found.");
             throw new IllegalArgumentException();
         }
+
         if (
                 Objects.nonNull(status.getReader()) &&
                 ! readerRepository.existsById(status.getReader().getId())
@@ -50,6 +52,12 @@ public class BookStatusServiceImpl implements BookStatusService {
             throw new IllegalArgumentException();
         }
         if (status.isRented()) {
+
+            if (repository.countByReaderId(status.getReader().getId()) >= 4) {
+                throw new BookLimitExceededException("Already has 4 or more books");
+            }
+
+
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(new Date());
             status.setRentedOn(calendar.getTime());

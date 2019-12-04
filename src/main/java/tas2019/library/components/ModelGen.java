@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import tas2019.library.entities.Book;
 import tas2019.library.entities.BookStatus;
 import tas2019.library.entities.Reader;
+import tas2019.library.exceptions.BookLimitExceededException;
 import tas2019.library.services.book.BookService;
 import tas2019.library.services.bookstatus.BookStatusService;
 import tas2019.library.services.reader.ReaderService;
@@ -86,10 +87,14 @@ public class ModelGen {
         BookStatus kingSt = new BookStatus();
         kingSt.setBook(king);
 
-        bookStatusService.save(tokSt);
-        bookStatusService.save(lotrSt);
-        bookStatusService.save(lotr2St);
-        bookStatusService.save(kingSt);
+        try {
+            bookStatusService.save(tokSt);
+            bookStatusService.save(lotrSt);
+            bookStatusService.save(lotr2St);
+            bookStatusService.save(kingSt);
+        } catch (BookLimitExceededException e) {
+            e.printStackTrace();
+        }
 
     }
 }
