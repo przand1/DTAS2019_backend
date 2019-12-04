@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tas2019.library.entities.BookStatus;
 import tas2019.library.exceptions.BookLimitExceededException;
+import tas2019.library.exceptions.CardExpiredException;
 import tas2019.library.services.bookstatus.BookStatusService;
 
 import javax.validation.Valid;
@@ -71,6 +72,10 @@ public class BookStatusController {
                 return ResponseEntity
                         .status(HttpStatus.BAD_REQUEST)
                         .body("Przekroczono limit 4 książek");
+            } catch (CardExpiredException c) {
+                return  ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body("Przekrocznon datę ważności karty bibliotecznej");
             }
             return ResponseEntity.ok().build();
         } else {

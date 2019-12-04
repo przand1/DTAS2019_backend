@@ -8,6 +8,7 @@ import tas2019.library.repositories.BookStatusRepository;
 import tas2019.library.repositories.ReaderRepository;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -44,5 +45,12 @@ public class ReaderServiceImpl implements ReaderService {
     @Override
     public ReaderDTO getDTO(Reader reader) {
         return new ReaderDTO(reader, bookStatusRepository.countByReaderId(reader.getId()));
+    }
+
+    @Override
+    public boolean readerCardIsValid(int readerId) {
+        Reader reader = repository.findById(readerId).get();
+        int i = reader.getCardExpiryDate().compareTo(new Date());
+        return i > 0;
     }
 }

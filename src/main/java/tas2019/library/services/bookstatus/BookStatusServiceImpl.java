@@ -5,9 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tas2019.library.entities.BookStatus;
 import tas2019.library.exceptions.BookLimitExceededException;
+import tas2019.library.exceptions.CardExpiredException;
 import tas2019.library.repositories.BookRepository;
 import tas2019.library.repositories.BookStatusRepository;
 import tas2019.library.repositories.ReaderRepository;
+import tas2019.library.services.reader.ReaderService;
 
 import java.util.*;
 
@@ -19,6 +21,8 @@ public class BookStatusServiceImpl implements BookStatusService {
     private BookRepository bookRepository;
     @Autowired
     private ReaderRepository readerRepository;
+    @Autowired
+    private ReaderService readerService;
 
     private Logger logger = Logger.getLogger(BookStatusService.class);
 
@@ -35,7 +39,7 @@ public class BookStatusServiceImpl implements BookStatusService {
     }
 
     @Override
-    public BookStatus save(BookStatus status) throws BookLimitExceededException {
+    public BookStatus save(BookStatus status) throws BookLimitExceededException, CardExpiredException {
         /*
             Jeśli zawiera książkę lub czytelnika o złym id, nie zapisze i rzuci wyjątek.
          */
@@ -55,6 +59,9 @@ public class BookStatusServiceImpl implements BookStatusService {
 
             if (repository.countByReaderId(status.getReader().getId()) >= 4) {
                 throw new BookLimitExceededException("Already has 4 or more books");
+            }
+            if (!readerService.readerCardIsValid(status.getReader().getId())) {
+                throw new CardExpiredException("Card expired");
             }
 
 

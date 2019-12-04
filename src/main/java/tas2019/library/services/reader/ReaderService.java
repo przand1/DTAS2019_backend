@@ -13,4 +13,6 @@ public interface ReaderService {
     void delete(int id);
 
     ReaderDTO getDTO(Reader reader);
+
+    boolean readerCardIsValid(int readerId);
 }
