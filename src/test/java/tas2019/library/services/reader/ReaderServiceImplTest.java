@@ -30,7 +30,6 @@ class ReaderServiceImplTest {
     private ReaderService readerService;
     @MockBean
     private ReaderRepository readerRepository;
-    private ReaderServiceImpl readerServiceImpl = new ReaderServiceImpl();
 
     @Test
     void readerCardIsValid() throws ParseException {
@@ -41,10 +40,8 @@ class ReaderServiceImplTest {
         Reader reader2 = new Reader();
         reader1.setCardExpiryDate(date1);
         reader2.setCardExpiryDate(date2);
-        readerRepository.save(reader1);
-        readerRepository.save(reader2);
 
-        assertFalse(readerServiceImpl.readerCardIsValid(reader1.getId()));
-        assertTrue(readerServiceImpl.readerCardIsValid(reader2.getId()));
+        assertFalse(readerService.readerCardIsValid(reader1.getId()));
+        assertTrue(readerService.readerCardIsValid(reader2.getId()));
     }
 }

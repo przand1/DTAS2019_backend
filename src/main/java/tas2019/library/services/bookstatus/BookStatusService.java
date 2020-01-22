@@ -1,5 +1,6 @@
 package tas2019.library.services.bookstatus;
 
+import org.springframework.data.domain.Pageable;
 import tas2019.library.entities.BookStatus;
 import tas2019.library.exceptions.BookLimitExceededException;
 import tas2019.library.exceptions.CardExpiredException;
@@ -16,4 +17,8 @@ public interface BookStatusService {
     BookStatus uncheckedSave(BookStatus status);
 
     int countByReaderId(int id);
+
+    Iterable<BookStatus> getByBookTitle(String title, Pageable name2);
+
+
 }

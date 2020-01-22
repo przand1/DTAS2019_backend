@@ -2,6 +2,7 @@ package tas2019.library.services.bookstatus;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import tas2019.library.entities.BookStatus;
 import tas2019.library.exceptions.BookLimitExceededException;
@@ -108,5 +109,10 @@ public class BookStatusServiceImpl implements BookStatusService {
     @Override
     public int countByReaderId(int id) {
         return repository.countByReaderId(id);
+    }
+
+    @Override
+    public Iterable<BookStatus> getByBookTitle(String title, Pageable name2) {
+        return repository.findByBookTitle(title,name2);
     }
 }

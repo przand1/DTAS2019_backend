@@ -1,6 +1,7 @@
 package tas2019.library.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +41,18 @@ public class BookStatusController {
     )
     public Iterable<BookStatus> getAll() {
         return service.getAll();
+    }
+
+    @GetMapping(
+            path = "/bookstatus/find/{page}",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public Iterable<BookStatus> find(
+            @PathVariable("page") Integer pageNr,
+            @RequestParam("size") Integer perPage,
+            @RequestParam("title") String title
+    ) {
+        return service.getByBookTitle(title, new PageRequest(pageNr,perPage));
     }
 
     @PostMapping("/bookstatus")
