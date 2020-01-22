@@ -13,7 +13,7 @@ public interface BookStatusRepository extends CrudRepository<BookStatus, Integer
     int countByReaderId(int id);
     BookStatus findByBookId(int id);
 
-    @Query("SELECT b FROM BookStatus b WHERE LOWER(b.book.title) LIKE LOWER(CONCAT('%',title,'%'))")
+    @Query("SELECT b FROM BookStatus b WHERE LOWER(b.book.title) LIKE LOWER(CONCAT('%',:title,'%'))")
     List<BookStatus> findByBookTitle(@Param("title") String title, Pageable name) ;
 
 
