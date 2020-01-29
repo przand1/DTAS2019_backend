@@ -115,4 +115,9 @@ public class BookStatusServiceImpl implements BookStatusService {
     public Iterable<BookStatus> getByBookTitle(String title, Pageable name2) {
         return repository.findByBookTitle(title,name2);
     }
+
+    @Override
+    public int countByBookTitle(String title) {
+        return repository.countByBookTitle(title);
+    }
 }

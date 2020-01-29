@@ -55,6 +55,14 @@ public class BookStatusController {
         return service.getByBookTitle(title, new PageRequest(pageNr,perPage));
     }
 
+    @GetMapping(
+            path = "/bookstatus/count",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public int countByBookTitle(@RequestParam("title") String title) {
+        return service.countByBookTitle(title);
+    }
+
     @PostMapping("/bookstatus")
     public ResponseEntity<BookStatus> create(@RequestBody @Valid @NotNull BookStatus status) {
         try {

@@ -20,5 +20,7 @@ public interface BookStatusService {
 
     Iterable<BookStatus> getByBookTitle(String title, Pageable name2);
 
+    int countByBookTitle(String title);
+
 
 }
