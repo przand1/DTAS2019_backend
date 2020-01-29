@@ -10,7 +10,13 @@ import tas2019.library.services.book.BookService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/api")
@@ -38,7 +44,39 @@ public class BookController {
     public Iterable<Book> getAll() {
         return service.getAll();
     }
-    
+
+
+
+
+    @GetMapping(
+            path = "/book/find/{query}",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public Iterable<Book> Find(@PathVariable("query")String title)// wyciągniecie query do title
+    {
+        List<Book> result = new ArrayList<>();
+        Iterable<Book> books = service.getAll();// wszystkie ksiazki do filtrowania
+        Iterator<Book> iterator =books.iterator();//tworzymy iterator do wszystkich ksiazek cos jak petla bez indeksów nastepny element cały czas
+        Pattern queryPattern = Pattern.compile(title); //tworzymy regexa z fraza wpisaną zeby sprawdzić dany tytuł/autor
+        while(iterator.hasNext()){
+            Book book = iterator.next();//wyciagam pojedyncze ksiazki
+            Matcher titlematcher = queryPattern.matcher(book.getTitle());// matcher zapisuje odp regex
+            Matcher autormatcher = queryPattern.matcher(book.getAuthor());
+            if (titlematcher.find() || autormatcher.find()) {
+                result.add(book);
+            }
+        }
+        Iterable<Book> response = () -> result.iterator();
+        return response;
+    }
+
+
+
+
+
+
+
+
     @GetMapping(
             path = "book/page/{page}",
             produces = MediaType.APPLICATION_JSON_VALUE

@@ -31,7 +31,7 @@ public class ModelGen {
 
     private Logger logger = Logger.getLogger(ModelGen.class);
 
-    @PostConstruct
+//    @PostConstruct
     void generateMockData() throws ParseException {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
